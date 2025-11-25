@@ -12,6 +12,7 @@ cp .env.example .env
 
 - `OPENAI_BASE_URL`: OpenAI API의 기본 URL
 - `OPENAI_API_KEY`: OpenAI API 키
+- `SERPAPI_API_KEY`: SerpAPI 키
 
 ## Python 가상환경 설정
 
