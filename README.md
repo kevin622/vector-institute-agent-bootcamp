@@ -13,6 +13,7 @@ cp .env.example .env
 - `OPENAI_BASE_URL`: OpenAI API의 기본 URL
 - `OPENAI_API_KEY`: OpenAI API 키
 - `SERPAPI_API_KEY`: SerpAPI 키
+- `LANGSMITH_API_KEY`: LangSmith API 키
 
 ## Python 가상환경 설정
 
@@ -111,3 +112,27 @@ Name: call_calculator_agent
 *   데이터 레이크 비용 최적화: 9,900
 *   CI/CD 파이프라인 병렬화: 8,500
 ```
+
+## UI로 대화 흐름 시각화
+
+LangSmith API Key를 설정했다면 에이전트의 대화 흐름과 툴 호출을 시각적으로 확인할 수 있습니다.
+
+```bash
+langgraph dev --tunnel
+```
+
+## Interaction을 확인하는 화면
+
+![studio-interact](./assets/studio-interact.png)
+
+## Trace를 확인하는 화면
+
+![studio-trace](./assets/studio-trace.png)
+
+> LangChain의 ChatUI
+
+[Agent Chat](https://agentchat.vercel.app/)으로 접근 후 내용 입력하면 대화형 UI로도 에이전트를 사용할 수 있습니다.
+
+![agent-chat-hello](./assets/agent-chat-hello.png)
+![agent-chat-input](./assets/agent-chat-input.png)
+![agent-chat-result](./assets/agent-chat-result.png)
