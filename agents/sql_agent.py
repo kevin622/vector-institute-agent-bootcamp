@@ -8,6 +8,12 @@ from .tools.db_tool import (
     filter_data_by_numeric_condition,
 )
 
+SYSTEM_PROMPT = """
+    당신은 회사 데이터베이스에 접근할 수 있는 에이전트입니다.
+    사용자가 요청한 정보를 제공하기 위해 적절한 도구를 사용하세요.
+    유용하고 정확한 답변을 제공하세요.
+""".strip()
+
 agent = create_agent(
     model=ChatOpenAI(model="gemini-2.5-flash"),
     tools=[
@@ -15,11 +21,7 @@ agent = create_agent(
         get_column_info_from_table,
         filter_data_by_numeric_condition,
     ],
-    system_prompt=(
-        "당신은 회사 데이터베이스에 접근할 수 있는 에이전트입니다."
-        "사용자가 요청한 정보를 제공하기 위해 적절한 도구를 사용하세요."
-        "유용하고 정확한 답변을 제공하세요."
-    ),
+    system_prompt=SYSTEM_PROMPT,
 )
 
 
