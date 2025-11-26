@@ -1,6 +1,5 @@
 from pathlib import Path
 from datetime import datetime, timezone
-from typing import Optional
 
 from sqlalchemy import (
     create_engine,
