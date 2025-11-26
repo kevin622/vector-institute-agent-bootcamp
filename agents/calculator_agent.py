@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_openai import ChatOpenAI
 
-from .tools.calculator_tool import calculate_expression, get_current_datetime
+from agents.tools.calculator_tool import calculate_expression, get_current_datetime
 
 SYSTEM_PROMPT = """
 당신은 수학적 계산이나 날짜와 시간을 등을 제공할 수 있는 계산 에이전트입니다.

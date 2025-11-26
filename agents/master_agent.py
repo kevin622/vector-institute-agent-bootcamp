@@ -1,9 +1,9 @@
 from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
 
-from .sql_agent import call_sql_agent
-from .web_agent import call_web_agent
-from .calculator_agent import call_calculator_agent
+from agents.sql_agent import call_sql_agent
+from agents.web_agent import call_web_agent
+from agents.calculator_agent import call_calculator_agent
 
 SYSTEM_PROMPT = """
 당신은 여러 에이전트를 관리하는 마스터 에이전트입니다.

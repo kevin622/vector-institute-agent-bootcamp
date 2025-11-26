@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_openai import ChatOpenAI
 
-from .tools.web_tool import google_search
+from agents.tools.web_tool import google_search
 
 SYSTEM_PROMPT = """
 당신은 웹에 접근할 수 있는 에이전트입니다.
