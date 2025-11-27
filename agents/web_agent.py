@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_openai import ChatOpenAI
 
-from agents.tools.web_tool import google_search
+from tools.web_tool import google_search
 
 # Pre-defined values
 ## prompt

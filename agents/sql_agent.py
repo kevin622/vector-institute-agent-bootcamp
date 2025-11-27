@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_openai import ChatOpenAI
 
-from agents.tools.db_tool import (
+from tools.db_tool import (
     get_tables_from_db,
     get_column_info_from_table,
     filter_data_by_numeric_condition,

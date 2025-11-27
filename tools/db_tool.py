@@ -9,8 +9,8 @@ from langchain.tools import tool
 _ENGINE = None  # lazy 생성
 SessionLocal = None  # lazy 세션팩토리
 
-# 프로젝트 루트 기준 DB 파일 경로 (현재 파일: agents/tools/db_tool.py)
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+# 프로젝트 루트 기준 DB 파일 경로 (현재 파일: tools/db_tool.py)
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = PROJECT_ROOT / "db" / "data.db"
 
 

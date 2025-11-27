@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_openai import ChatOpenAI
 
-from agents.tools.calculator_tool import calculate_expression, get_current_datetime
+from tools.calculator_tool import calculate_expression, get_current_datetime
 
 # Pre-defined values
 ## prompt
