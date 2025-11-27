@@ -10,10 +10,17 @@ cp .env.example .env
 
 설정해야 할 환경변수는 다음과 같습니다:
 
-- `OPENAI_BASE_URL`: OpenAI API의 기본 URL
-- `OPENAI_API_KEY`: OpenAI API 키
-- `SERPAPI_API_KEY`: SerpAPI 키
-- `LANGSMITH_API_KEY`: LangSmith API 키
+- 모델 관련
+  - `OPENAI_BASE_URL`: OpenAI API의 기본 URL
+  - `OPENAI_API_KEY`: OpenAI API 키
+- 웹 검색 관련
+  - `SERPAPI_API_KEY`: SerpAPI 키
+- LangSmith 관련
+  - `LANGSMITH_API_KEY`: LangSmith API 키
+- LangFuse 관련
+  - `LANGFUSE_SECRET_KEY`: LangFuse 비밀 키
+  - `LANGFUSE_PUBLIC_KEY`: LangFuse 공개 키
+  - `LANGFUSE_HOST`: LangFuse 호스트 URL
 
 ## Python 가상환경 설정
 
@@ -112,6 +119,12 @@ Name: call_calculator_agent
 *   데이터 레이크 비용 최적화: 9,900
 *   CI/CD 파이프라인 병렬화: 8,500
 ```
+
+## LangFuse로 대화 내용 로깅
+
+LangFuse API Key를 설정했다면 에이전트의 대화 내용이 LangFuse에 자동으로 로깅됩니다.
+
+![langfuse-trace](./assets/langfuse-trace.png)
 
 ## UI로 대화 흐름 시각화
 
