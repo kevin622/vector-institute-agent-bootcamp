@@ -126,7 +126,7 @@ LangFuse API Key를 설정했다면 에이전트의 대화 내용이 LangFuse에
 
 ![langfuse-trace](./assets/langfuse-trace.png)
 
-## UI로 대화 흐름 시각화
+## LangSmith로 대화 흐름 시각화
 
 LangSmith API Key를 설정했다면 에이전트의 대화 흐름과 툴 호출을 시각적으로 확인할 수 있습니다.
 
@@ -134,15 +134,17 @@ LangSmith API Key를 설정했다면 에이전트의 대화 흐름과 툴 호출
 langgraph dev --tunnel
 ```
 
-## Interaction을 확인하는 화면
+### Interaction을 확인하는 화면
 
 ![studio-interact](./assets/studio-interact.png)
 
-## Trace를 확인하는 화면
+### Trace를 확인하는 화면
 
 ![studio-trace](./assets/studio-trace.png)
 
-> LangChain의 ChatUI
+## LangChain의 ChatUI
+
+> [공식문서 링크](https://docs.langchain.com/oss/python/langchain/ui)
 
 [Agent Chat](https://agentchat.vercel.app/)으로 접근 후 내용 입력하면 대화형 UI로도 에이전트를 사용할 수 있습니다.
 
