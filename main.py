@@ -8,7 +8,8 @@ from agents import master_agent
 langfuse_handler = CallbackHandler()
 
 if __name__ == "__main__":
-    query = "DB에서 예산이 1만 이하인 프로젝트들의 예산 합을 알려줘."
+    # query = "DB에서 예산이 1만 이하인 프로젝트들의 예산 합을 알려줘."
+    query = "메시와 호날두의 라리가 한 시즌 최다 골 수의 차이가 얼마야?"
     for chunk in master_agent.stream(
         {"messages": [{"role": "user", "content": query}]},
         config={"callbacks": [langfuse_handler]},
