@@ -16,6 +16,7 @@ cp .env.example .env
 - 웹 검색 관련
   - `SERPAPI_API_KEY`: SerpAPI 키
 - LangSmith 관련
+  - `LANGSMITH_TRACING`: LangSmith 추적 활성화 여부 (true|false)
   - `LANGSMITH_API_KEY`: LangSmith API 키
 - LangFuse 관련
   - `LANGFUSE_SECRET_KEY`: LangFuse 비밀 키
