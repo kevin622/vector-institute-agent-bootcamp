@@ -283,3 +283,6 @@ $RECYCLE.BIN/
 .langgraph_api
 .langgraph_api/
 .langgraph_api/*
+
+agent_result_*.jsonl
+evaluation_result_*.jsonl
