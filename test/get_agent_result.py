@@ -10,8 +10,10 @@ load_dotenv()
 from agents import master_agent
 
 langfuse_handler = CallbackHandler()
-TEST_DATA_DIR = (Path(__file__).resolve().parent / "test" / "test_10.json")
-AGENT_RESULT_FILE = Path(__file__).resolve().parent / "test" / f"agent_result_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jsonl"
+TEST_DATA_DIR = Path(__file__).resolve().parent / "results" / "web_test_10.json"
+AGENT_RESULT_FILE = (
+    Path(__file__).resolve().parent / "results" / f"agent_result_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jsonl"
+)
 
 if __name__ == "__main__":
     with open(TEST_DATA_DIR, "r", encoding="utf-8") as f:

@@ -5,17 +5,23 @@ import asyncio
 
 from dotenv import load_dotenv
 from langfuse.langchain import CallbackHandler
+from tqdm import tqdm
 
 load_dotenv()
-
 from agents.evaluator_agent import aevaluate_response
 
 
 langfuse_handler = CallbackHandler()
 
-AGENT_RESULT_FILE = Path(__file__).resolve().parent / "agent_result_20251202_144937.jsonl"
+# AGENT_RESULT_FILE_NAME은 test/results 디렉토리 내에 `agent_result_YYYYMMDD_HHMMSS.jsonl` 형식의 파일명으로 저장된 파일이어야 합니다.
+# 디폴트로 가장 최근 생성된 파일명을 사용하도록 설정했습니다.
+AGENT_RESULT_FILE_NAME = sorted(
+    [f.name for f in (Path(__file__).resolve().parent / "results").glob("agent_result_*.jsonl")],
+    reverse=True,
+)[0]
+AGENT_RESULT_FILE = Path(__file__).resolve().parent / "results" / AGENT_RESULT_FILE_NAME
 EVALUATION_RESULT_FILE = (
-    Path(__file__).resolve().parent / f"evaluation_result_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jsonl"
+    Path(__file__).resolve().parent / "results" / f"evaluation_result_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jsonl"
 )
 
 
@@ -35,7 +41,7 @@ async def aget_evaluation_responses(agent_results, concurrency: int = 5):
             )
         )
     results = []
-    for idx in range(0, len(tasks), concurrency):
+    for idx in tqdm(range(0, len(tasks), concurrency), desc="Evaluating agent responses"):
         result = await asyncio.gather(*tasks[idx : idx + concurrency])
         results.extend(result)
     return results

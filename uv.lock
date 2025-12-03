@@ -1309,6 +1309,7 @@ dependencies = [
     { name = "langgraph-cli", extra = ["inmem"] },
     { name = "python-dotenv" },
     { name = "sqlalchemy" },
+    { name = "tqdm" },
 ]
 
 [package.metadata]
@@ -1320,6 +1321,7 @@ requires-dist = [
     { name = "langgraph-cli", extras = ["inmem"], specifier = ">=0.4.7" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "sqlalchemy", specifier = ">=2.0.0" },
+    { name = "tqdm", specifier = ">=4.67.1" },
 ]
 
 [[package]]

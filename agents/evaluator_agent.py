@@ -60,5 +60,3 @@ async def aevaluate_response(question: str, ground_truth: str, proposed_response
         config={"callbacks": [langfuse_handler]},
     )
     return response["structured_response"].model_dump()
-    # return response["messages"][-1].text
-    
