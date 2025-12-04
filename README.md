@@ -149,13 +149,13 @@ langgraph dev --tunnel
 
 ![studio-interact](./assets/studio-interact.png)
 
+![studio-chat](./assets/studio-chat.png)
+
 ### Trace를 확인하는 화면
 
 ![studio-trace](./assets/studio-trace.png)
 
-## LangChain의 ChatUI
-
-> [공식문서 링크](https://docs.langchain.com/oss/python/langchain/ui)
+> LangChain의 ChatUI [공식문서 링크](https://docs.langchain.com/oss/python/langchain/ui)
 
 [Agent Chat](https://agentchat.vercel.app/)으로 접근 후 내용 입력하면 대화형 UI로도 에이전트를 사용할 수 있습니다.
 
