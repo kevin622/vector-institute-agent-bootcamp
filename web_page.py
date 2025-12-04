@@ -63,7 +63,7 @@ if query:
                             st.markdown(message.content)
                         else:  # tool messages
                             st.caption(message.content)
-                    elif message.tool_calls:
+                    if hasattr(message, "tool_calls"):
                         for tool_call in message.tool_calls:
                             st.write(f"`{tool_call['name']}`")
                             st.json(tool_call["args"])

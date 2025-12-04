@@ -5,7 +5,9 @@ from langchain_openai import ChatOpenAI
 from tools.db_tool import (
     get_tables_from_db,
     get_column_info_from_table,
-    filter_data_by_numeric_condition,
+    filter_data_by_gte_or_lte,
+    filter_data_by_inclusion,
+    join_tables_on_column,
 )
 
 # Pre-defined values
@@ -20,7 +22,9 @@ SYSTEM_PROMPT = """
 TOOLS = [
     get_tables_from_db,
     get_column_info_from_table,
-    filter_data_by_numeric_condition,
+    filter_data_by_gte_or_lte,
+    filter_data_by_inclusion,
+    join_tables_on_column,
 ]
 TOOLS_DESCRIPTION = "\n".join([f"- {tool.name}: {tool.description}" for tool in TOOLS])
 ## agent

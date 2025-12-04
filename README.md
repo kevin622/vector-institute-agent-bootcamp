@@ -121,6 +121,16 @@ Name: call_calculator_agent
 *   CI/CD 파이프라인 병렬화: 8,500
 ```
 
+## Streamlit 웹페이지 실행
+
+다음 명령어로 Streamlit 웹페이지를 실행하세요.
+
+```bash
+streamlit run web_page.py
+```
+
+![streamlit-page](./assets/streamlit-page.png)
+
 ## LangFuse로 대화 내용 로깅
 
 LangFuse API Key를 설정했다면 에이전트의 대화 내용이 LangFuse에 자동으로 로깅됩니다.

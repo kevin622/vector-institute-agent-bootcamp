@@ -20,6 +20,7 @@ TOOLS_DESCRIPTION = "\n".join([f"- {tool.name}: {tool.description}" for tool in 
 AGENT_DESCRIPTION = f"""
 웹(인터넷)을 검색할 수 있는 에이전트를 호출하여 응답을 반환.
 사용자가 요청한 정보를 제공하기 위해 적절한 도구를 사용하세요.
+한 번에 하나의 정보만 검색합니다. 다수의 정보를 검색해야 하면 정보 단위를 나누어 여러 번 검색하세요.
 많은 검색 정보 중 필요한 정보를 잘 추출하여 유용하고 정확한 답변을 제공하세요.
 사용 가능한 도구는 다음과 같습니다:
 {TOOLS_DESCRIPTION}
