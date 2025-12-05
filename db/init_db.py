@@ -6,38 +6,23 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    Text,
-    Float,
     ForeignKey,
     DateTime,
 )
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker, Session
 import random
 
-try:
-    from db.sample_data import (
-        generate_departments,
-        generate_employees,
-        generate_products,
-        generate_clients,
-        generate_contracts,
-        generate_invoices,
-        generate_projects,
-        generate_meetings,
-        generate_project_assignments,
-    )
-except Exception:
-    from sample_data import (  # type: ignore
-        generate_departments,
-        generate_employees,
-        generate_products,
-        generate_clients,
-        generate_contracts,
-        generate_invoices,
-        generate_projects,
-        generate_meetings,
-        generate_project_assignments,
-    )
+from db.sample_data import (
+    generate_departments,
+    generate_employees,
+    generate_products,
+    generate_clients,
+    generate_contracts,
+    generate_invoices,
+    generate_projects,
+    generate_meetings,
+    generate_project_assignments,
+)
 
 DB_PATH = Path(__file__).parent / "data.db"
 Base = declarative_base()
@@ -60,6 +45,7 @@ def get_session() -> Session:
 
 
 # ----- Tables (<= 10) -----
+
 
 class Department(Base):
     __tablename__ = "departments"
@@ -282,7 +268,11 @@ def insert_data_into_db(
         for inv in invoice_data:
             # find matching contract by client+product
             match = next(
-                (c for c in contract_objs if c.client.name == inv["contract_client_name"] and c.product.name == inv["contract_product_name"]),
+                (
+                    c
+                    for c in contract_objs
+                    if c.client.name == inv["contract_client_name"] and c.product.name == inv["contract_product_name"]
+                ),
                 None,
             )
             if match is None:
@@ -329,15 +319,12 @@ def insert_data_into_db(
         proj_light = [
             {
                 "name": p.name,
-                "owner_email": next((e for e_email, e in emp_objs.items() if e.id == p.owner_id), None) and
-                next((email for email, e in emp_objs.items() if e.id == p.owner_id), None),
+                "owner_email": next((e for e_email, e in emp_objs.items() if e.id == p.owner_id), None)
+                and next((email for email, e in emp_objs.items() if e.id == p.owner_id), None),
             }
             for p in session.query(Project).all()
         ]
-        emp_light = [
-            {"email": email}
-            for email in emp_objs.keys()
-        ]
+        emp_light = [{"email": email} for email in emp_objs.keys()]
         assign_data = generate_project_assignments(assignments_count, proj_light, emp_light)
         name_to_project = {p.name: p for p in session.query(Project).all()}
         for a in assign_data:
@@ -384,6 +371,4 @@ if __name__ == "__main__":
         assignments_count=args.assignments,
     )
     total_tables = 9
-    print(
-        f"Seeded DB at {DB_PATH} with realistic data across {total_tables} tables."
-    )
+    print(f"Seeded DB at {DB_PATH} with realistic data across {total_tables} tables.")

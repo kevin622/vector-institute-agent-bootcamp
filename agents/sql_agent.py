@@ -5,6 +5,7 @@ from langchain_openai import ChatOpenAI
 from tools.db_tool import (
     get_tables_from_db,
     get_column_info_from_table,
+    get_all_data_from_table,
     filter_data_by_gte_or_lte,
     filter_data_by_inclusion,
     filter_data_by_like,
@@ -24,6 +25,7 @@ SYSTEM_PROMPT = """
 TOOLS = [
     get_tables_from_db,
     get_column_info_from_table,
+    get_all_data_from_table,
     filter_data_by_gte_or_lte,
     filter_data_by_inclusion,
     filter_data_by_like,

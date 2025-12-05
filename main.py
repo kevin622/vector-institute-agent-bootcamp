@@ -50,23 +50,24 @@ if query:
         st.markdown(query)
     st.session_state["agent_chat_history"].append(HumanMessage(content=query))
     st.session_state["all_messages"].append(HumanMessage(content=query))
-    with st.chat_message("ai"):
-        streamed_messages = []
-        for chunk in master_agent.stream(
-            {"messages": st.session_state["all_messages"]},
-            config={"callbacks": [langfuse_handler]},
-        ):
-            for update in chunk.values():
-                for message in update.get("messages", []):
-                    if message.content:
-                        if message.type == "ai":
-                            st.markdown(message.content)
-                        else:  # tool messages
-                            st.caption(message.content)
-                    if hasattr(message, "tool_calls"):
-                        for tool_call in message.tool_calls:
-                            st.write(f"`{tool_call['name']}`")
-                            st.json(tool_call["args"])
-                    streamed_messages.append(message)
-                    st.session_state["all_messages"].append(message)
-        st.session_state["agent_chat_history"].append(AgentMessage(streamed_messages))
+    with st.spinner("_생각중..._", show_time=True):
+        with st.chat_message("ai"):
+            streamed_messages = []
+            for chunk in master_agent.stream(
+                {"messages": st.session_state["all_messages"]},
+                config={"callbacks": [langfuse_handler]},
+            ):
+                for update in chunk.values():
+                    for message in update.get("messages", []):
+                        if message.content:
+                            if message.type == "ai":
+                                st.markdown(message.content)
+                            else:  # tool messages
+                                st.caption(message.content)
+                        if hasattr(message, "tool_calls"):
+                            for tool_call in message.tool_calls:
+                                st.write(f"`{tool_call['name']}`")
+                                st.json(tool_call["args"])
+                        streamed_messages.append(message)
+                        st.session_state["all_messages"].append(message)
+            st.session_state["agent_chat_history"].append(AgentMessage(streamed_messages))
