@@ -16,7 +16,7 @@ def get_current_datetime() -> str:
 
 
 @tool
-def calculate_expression(expression: str) -> float:
+def calculate_math_expression(expression: str) -> float:
     """
     주어진 수학 표현식을 계산하여 결과를 반환.
 
@@ -34,3 +34,38 @@ def calculate_expression(expression: str) -> float:
         return result
     except Exception as e:
         return f"계산 중 오류 발생: {e}"
+
+
+@tool
+def sort_values_based_on_key(values: list, key: str) -> list:
+    """
+    주어진 키를 기준으로 값들을 정렬하여 반환.
+
+    Args:
+        values (list): 정렬할 값들의 리스트(딕셔너리 형태).
+        key (str): 정렬 기준이 되는 키.
+    Returns:
+        list: 정렬된 값들의 리스트.
+    """
+    try:
+        sorted_values = sorted(values, key=lambda x: x.get(key, 0))
+        return sorted_values
+    except Exception as e:
+        return f"정렬 중 오류 발생: {e}"
+
+
+@tool
+def get_length_of_object(obj: list | dict | str) -> int:
+    """
+    주어진 객체의 길이를 반환.
+
+    Args:
+        obj (list | dict | str): 길이를 구할 객체.
+    Returns:
+        int: 객체의 길이.
+    """
+    try:
+        length = len(obj)
+        return length
+    except Exception as e:
+        return f"길이 계산 중 오류 발생: {e}"

@@ -2,7 +2,12 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_openai import ChatOpenAI
 
-from tools.calculator_tool import calculate_expression, get_current_datetime
+from tools.calculator_tool import (
+    calculate_math_expression,
+    get_current_datetime,
+    sort_values_based_on_key,
+    get_length_of_object,
+)
 
 # Pre-defined values
 ## prompt
@@ -13,8 +18,10 @@ SYSTEM_PROMPT = """
 """.strip()
 ## tools
 TOOLS = [
-    calculate_expression,
+    calculate_math_expression,
     get_current_datetime,
+    sort_values_based_on_key,
+    get_length_of_object,
 ]
 TOOLS_DESCRIPTION = "\n".join([f"- {tool.name}: {tool.description}" for tool in TOOLS])
 ## agent

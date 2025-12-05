@@ -146,6 +146,44 @@ def filter_data_by_inclusion(
 
 
 @tool
+def filter_data_by_like(
+    table_name: str,
+    column_name: str,
+    like_pattern: str,
+) -> list[tuple]:
+    """
+    특정 테이블의 특정 컬럼에 대해 LIKE(부분 문자열) 조건 필터링을 수행하여 결과 반환.
+
+    Args:
+        table_name (str): 필터링할 테이블 이름.
+        column_name (str): 필터링할 컬럼 이름.
+        like_pattern (str): SQL LIKE 패턴(예: '%Research%').
+    Returns:
+        list[tuple]: 필터링된 결과 리스트.
+    Raises:
+        ValueError: 지정된 컬럼이 테이블에 존재하지 않을 경우.
+    """
+    try:
+        engine = _get_engine()
+        with engine.connect() as conn:
+            inspector = inspect(conn)
+            columns = inspector.get_columns(table_name)
+            column_names = [col["name"] for col in columns]
+            if column_name not in column_names:
+                raise ValueError(f"Column '{column_name}' does not exist in table '{table_name}'.")
+            metadata = MetaData()
+            table = Table(table_name, metadata, autoload_with=engine)
+
+            stmt = select(table).where(table.c[column_name].like(like_pattern))
+
+            result = conn.execute(stmt)
+            rows = result.fetchall()
+            return rows
+    except Exception as e:
+        return f"Error occurred while filtering data from table '{table_name}' with LIKE: {str(e)}"
+
+
+@tool
 def join_tables_on_column(
     left_table: str,
     right_table: str,

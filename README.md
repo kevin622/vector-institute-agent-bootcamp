@@ -35,6 +35,7 @@ pip install uv
 
 ```bash
 uv sync
+source .venv/bin/activate
 ```
 
 ## SQLite 데이터베이스 설정
@@ -42,83 +43,69 @@ uv sync
 다음 명령어를 실행하면 DB가 생성되고 가짜 데이터가 시드됩니다.
 
 ```bash
-python db/init_db.py
+python -m db.init_db
 ```
 
 `db/data.db` 파일이 프로젝트 루트에 생성됩니다.
 
-스키마는 두 개의 테이블을 포함합니다:
+스키마는 아홉 개의 테이블이 포함되어 있습니다.
 
-- `users(id, name, email, age, created_at)`
-- `projects(id, user_id, title, description, budget, created_at)`
+- `departments`: 부서명, 위치, 생성일
+- `employees`: 이름, 이메일(유니크), 직함, 부서 FK, 생성일
+- `products`: 제품명(유니크), 카테고리, 가격, 과금주기, 생성일
+- `clients`: 고객사명(유니크), 산업군, 도시, 생성일
+- `contracts`: 고객 FK, 제품 FK, 영업 담당자 FK, 금액, 계약기간, 상태, 생성일
+- `invoices`: 계약 FK, 청구/지불 금액, 결제수단, 생성일
+- `projects`: 이름, 고객 FK, 제품 FK, 프로젝트 오너 FK, 단계(PoC/Pilot/Production), 생성일
+- `meetings`: 고객 FK, 주최자 FK, 주제, 생성일
+- `project_assignments`: 프로젝트 FK, 직원 FK, 역할, 생성일
 
 ## 에이전트 실행
 
 환경 준비 후 아래 명령을 실행하세요.
 
 ```bash
-python main.py
+python -m test.test_main_agent
 ```
 
-실행 결과 예시
+> 실행 결과 예시
 
 ```text
+질문을 입력하세요: 메시와 호날두의 라리가 한 시즌 최다 골 수의 차이가 얼마야?
 ================================== Ai Message ==================================
 Tool Calls:
-  call_sql_agent (function-call-11894917129289076080)
- Call ID: function-call-11894917129289076080
+  call_web_agent (function-call-2218937160780267494)
+ Call ID: function-call-2218937160780267494
   Args:
-    input_text: 예산이 1만 이하인 프로젝트들의 예산 합을 알려줘
+    input_text: 메시 라리가 한 시즌 최다 골
+  call_web_agent (function-call-2218937160780267321)
+ Call ID: function-call-2218937160780267321
+  Args:
+    input_text: 호날두 라리가 한 시즌 최다 골
 ================================= Tool Message =================================
-Name: call_sql_agent
+Name: call_web_agent
 
-주어진 정보에 따르면 예산이 1만 이하인 프로젝트들을 필터링할 수는 있지만, 필터링된 프로젝트들의 예산 합을 직접적으로 계산하는 기능은 제공되지 않습니다.
-
-만약 예산이 1만 이하인 프로젝트들의 목록을 원하시면 해당 정보를 찾아드릴 수 있습니다.
-================================== Ai Message ==================================
-
-예산이 1만 이하인 프로젝트들의 예산 목록을 알려주세요. 이 정보를 바탕으로 제가 합계를 계산해 드리겠습니다.
-Tool Calls:
-  call_sql_agent (function-call-3649536677768337015)
- Call ID: function-call-3649536677768337015
-  Args:
-    input_text: 예산이 1만 이하인 프로젝트들의 예산 목록을 알려줘
+메시는 2011-12 시즌에 라리가에서 50골을 득점하여 한 시즌 최다 골 기록을 세웠습니다.
 ================================= Tool Message =================================
-Name: call_sql_agent
+Name: call_web_agent
 
-예산이 1만 이하인 프로젝트들의 예산 목록입니다:
-
-*   **사내 일정 통합 플랫폼**: 7500.0
-*   **고객 대시보드 리뉴얼**: 6400.0
-*   **ETL 파이프라인 안정화**: 9300.0
-*   **데이터 카탈로그 구축**: 8800.0
-*   **오브저버빌리티 개선**: 7000.0
-*   **AB 테스트 자동화**: 5600.0
-*   **데이터 레이크 비용 최적화**: 9900.0
-*   **CI/CD 파이프라인 병렬화**: 8500.0
+호날두의 라리가 한 시즌 최다 골 기록은 **48골**로, **2014-2015 시즌**에 달성했습니다.
 ================================== Ai Message ==================================
 Tool Calls:
-  call_calculator_agent (function-call-12988403354602122390)
- Call ID: function-call-12988403354602122390
+  call_calculator_agent (function-call-596742620571668837)
+ Call ID: function-call-596742620571668837
   Args:
-    input_text: 7500.0 + 6400.0 + 9300.0 + 8800.0 + 7000.0 + 5600.0 + 9900.0 + 8500.0 계산해줘
+    input_text: 50-48
 ================================= Tool Message =================================
 Name: call_calculator_agent
 
-제공된 모든 숫자의 합은 63000.0 입니다.
+50-48의 결과는 2입니다.
 ================================== Ai Message ==================================
 
-예산이 1만 이하인 프로젝트들의 예산 합은 63,000입니다.
+메시와 호날두의 라리가 한 시즌 최다 골 기록의 차이는 2골입니다.
 
-각 프로젝트의 예산은 다음과 같습니다.
-*   사내 일정 통합 플랫폼: 7,500
-*   고객 대시보드 리뉴얼: 6,400
-*   ETL 파이프라인 안정화: 9,300
-*   데이터 카탈로그 구축: 8,800
-*   오브저버빌리티 개선: 7,000
-*   AB 테스트 자동화: 5,600
-*   데이터 레이크 비용 최적화: 9,900
-*   CI/CD 파이프라인 병렬화: 8,500
+*   **메시:** 2011-12 시즌 50골
+*   **호날두:** 2014-15 시즌 48골
 ```
 
 ## Streamlit 웹페이지 실행
@@ -126,7 +113,7 @@ Name: call_calculator_agent
 다음 명령어로 Streamlit 웹페이지를 실행하세요.
 
 ```bash
-streamlit run web_page.py
+streamlit run main.py
 ```
 
 ![streamlit-page](./assets/streamlit-page.png)
