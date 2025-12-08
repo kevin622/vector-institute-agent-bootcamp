@@ -34,8 +34,11 @@ for message in st.session_state["agent_chat_history"]:
         with st.chat_message("ai"):
             for streamed_message in message.streamed_messages:
                 if streamed_message.content:
-                    st.markdown(streamed_message.content)
-                elif streamed_message.tool_calls:
+                    if streamed_message.type == "ai":
+                        st.markdown(streamed_message.content)
+                    else:  # tool messages
+                        st.caption(streamed_message.content)
+                elif hasattr(streamed_message, "tool_calls"):
                     for tool_call in streamed_message.tool_calls:
                         st.write(f"`{tool_call['name']}`")
                         st.json(tool_call["args"])
@@ -46,12 +49,12 @@ for message in st.session_state["agent_chat_history"]:
 query = st.chat_input()
 
 if query:
-    with st.chat_message("user"):
-        st.markdown(query)
     st.session_state["agent_chat_history"].append(HumanMessage(content=query))
     st.session_state["all_messages"].append(HumanMessage(content=query))
-    with st.spinner("_생각중..._", show_time=True):
-        with st.chat_message("ai"):
+    with st.chat_message("user"):
+        st.markdown(query)
+    with st.chat_message("ai"):
+        with st.spinner("_생각중..._", show_time=True):
             streamed_messages = []
             for chunk in master_agent.stream(
                 {"messages": st.session_state["all_messages"]},

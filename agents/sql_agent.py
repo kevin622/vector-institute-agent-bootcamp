@@ -10,6 +10,7 @@ from tools.db_tool import (
     filter_data_by_inclusion,
     filter_data_by_like,
     join_tables_on_column,
+    get_unique_values_of_columns,
 )
 
 # Pre-defined values
@@ -30,6 +31,7 @@ TOOLS = [
     filter_data_by_inclusion,
     filter_data_by_like,
     join_tables_on_column,
+    get_unique_values_of_columns,
 ]
 TOOLS_DESCRIPTION = "\n".join([f"- {tool.name}: {tool.description}" for tool in TOOLS])
 ## agent

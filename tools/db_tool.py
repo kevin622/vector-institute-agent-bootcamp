@@ -134,9 +134,7 @@ def get_all_data_from_table(table_name: str) -> dict[str, Any]:
                 "rows": formatted_rows,
             }
     except Exception as e:
-        return _error_response(
-            f"Error occurred while getting data from table '{table_name}': {str(e)}"
-        )
+        return _error_response(f"Error occurred while getting data from table '{table_name}': {str(e)}")
 
 
 @tool
@@ -197,9 +195,7 @@ def filter_data_by_gte_or_lte(
                 "rows": formatted_rows,
             }
     except Exception as e:
-        return _error_response(
-            f"Error occurred while filtering data from table '{table_name}': {str(e)}"
-        )
+        return _error_response(f"Error occurred while filtering data from table '{table_name}': {str(e)}")
 
 
 @tool
@@ -249,9 +245,7 @@ def filter_data_by_inclusion(
                 "rows": formatted_rows,
             }
     except Exception as e:
-        return _error_response(
-            f"Error occurred while filtering data from table '{table_name}': {str(e)}"
-        )
+        return _error_response(f"Error occurred while filtering data from table '{table_name}': {str(e)}")
 
 
 @tool
@@ -301,9 +295,7 @@ def filter_data_by_like(
                 "rows": formatted_rows,
             }
     except Exception as e:
-        return _error_response(
-            f"Error occurred while filtering data from table '{table_name}' with LIKE: {str(e)}"
-        )
+        return _error_response(f"Error occurred while filtering data from table '{table_name}' with LIKE: {str(e)}")
 
 
 @tool
@@ -378,6 +370,38 @@ def join_tables_on_column(
                 "rows": formatted_rows,
             }
     except Exception as e:
-        return _error_response(
-            f"Error occurred while joining tables '{left_table}' and '{right_table}': {str(e)}"
-        )
+        return _error_response(f"Error occurred while joining tables '{left_table}' and '{right_table}': {str(e)}")
+
+
+@tool
+def get_unique_values_of_columns(table_name: str, column_names: List[str]) -> dict[str, Any]:
+    """
+    특정 테이블의 여러 컬럼에 대해 고유 값들을 반환.
+
+    Args:
+        table_name (str): 데이터를 가져올 테이블 이름.
+        column_names (List[str]): 고유 값을 가져올 컬럼 이름 리스트.
+    Returns:
+        dict: 컬럼별 고유 값 리스트를 담은 딕셔너리.
+    """
+    try:
+        engine = _get_engine()
+        with engine.connect() as conn:
+            metadata = MetaData()
+            table = Table(table_name, metadata, autoload_with=engine)
+
+            unique_values: Dict[str, List[Any]] = {}
+            for col_name in column_names:
+                if col_name not in table.c:
+                    return _error_response(f"Column '{col_name}' does not exist in table '{table_name}'.")
+                stmt = select(table.c[col_name]).distinct()
+                result = conn.execute(stmt)
+                rows = result.fetchall()
+                unique_values[col_name] = [row[0] for row in rows]
+
+            return {
+                "table": table_name,
+                "unique_values": unique_values,
+            }
+    except Exception as e:
+        return _error_response(f"Error occurred while getting unique values from table '{table_name}': {str(e)}")
