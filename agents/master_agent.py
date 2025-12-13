@@ -17,10 +17,17 @@ SYSTEM_PROMPT = """
 7. 도구가 "작업 불가"라는 응답을 주더라도, 문제를 해결할 수 있는 방법을 다시 검토하고 필요하다면 도구를 재활용하세요.
 8. 최종 답변은 사용자가 이해하기 쉽도록 명확하고 간결하게 작성하세요.
 9. 항상 친절하고 정확하며 유용한 답변을 제공하세요.
+10. 현재 알 수 없는 정보들을 추론하거나 가정하지 마세요. 도구를 확인해서 확인할 수 있는 정보는 반드시 도구를 사용하여 확인하세요.
 """.strip()
+
+TOOLS = [
+    call_sql_agent,
+    call_web_agent,
+    call_calculator_agent,
+]
 
 agent = create_agent(
     model=ChatOpenAI(model="gemini-2.5-pro"),
-    tools=[call_sql_agent, call_web_agent, call_calculator_agent],
+    tools=TOOLS,
     system_prompt=SYSTEM_PROMPT,
 )

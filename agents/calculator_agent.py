@@ -5,6 +5,8 @@ from langchain_openai import ChatOpenAI
 from tools.calculator_tool import (
     calculate_math_expression,
     get_current_datetime,
+    get_difference_between_datetimes,
+    calculate_datetime_expression,
     sort_values_based_on_key,
     get_length_of_object,
 )
@@ -20,6 +22,8 @@ SYSTEM_PROMPT = """
 TOOLS = [
     calculate_math_expression,
     get_current_datetime,
+    get_difference_between_datetimes,
+    calculate_datetime_expression,
     sort_values_based_on_key,
     get_length_of_object,
 ]

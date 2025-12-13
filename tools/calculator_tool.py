@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from langchain.tools import tool
 
@@ -13,6 +13,55 @@ def get_current_datetime() -> str:
     """
     now = datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S")
+
+
+@tool
+def get_difference_between_datetimes(datetime_str1: str, datetime_str2: str) -> str:
+    """
+    두 날짜 및 시간 문자열 간의 차이를 계산하여 반환.
+
+    Args:
+        datetime_str1 (str): 첫 번째 날짜 및 시간 문자열('YYYY-MM-DD HH:MM:SS' 형식).
+        datetime_str2 (str): 두 번째 날짜 및 시간 문자열('YYYY-MM-DD HH:MM:SS' 형식).
+    Returns:
+        str: 두 날짜 및 시간 간의 차이.
+    """
+    try:
+        dt1 = datetime.strptime(datetime_str1, "%Y-%m-%d %H:%M:%S")
+        dt2 = datetime.strptime(datetime_str2, "%Y-%m-%d %H:%M:%S")
+        difference = abs(dt2 - dt1)
+        return str(difference)
+    except Exception as e:
+        return f"날짜 및 시간 차이 계산 중 오류 발생: {e}"
+
+
+@tool
+def calculate_datetime_expression(datetime_str: str, expression: str) -> str:
+    """
+    주어진 날짜 및 시간에 대한 표현식을 계산하여 새로운 날짜 및 시간을 반환.
+
+    Args:
+        datetime_str (str): 기준 날짜 및 시간 문자열('YYYY-MM-DD HH:MM:SS' 형식).
+        expression (str): 계산할 표현식(예: '+2 days', '-3 hours'). 현재 지원되는 단위는 days, hours, minutes입니다.
+    Returns:
+        str: 계산된 새로운 날짜 및 시간.
+    """
+    try:
+        dt = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
+        amount, unit = expression.split()
+        amount = int(amount)
+        if unit.startswith("day"):
+            delta = timedelta(days=amount)
+        elif unit.startswith("hour"):
+            delta = timedelta(hours=amount)
+        elif unit.startswith("minute"):
+            delta = timedelta(minutes=amount)
+        else:
+            return f"지원되지 않는 단위입니다: {unit}. 지원되는 단위: days, hours, minutes."
+        new_dt = dt + delta
+        return new_dt.strftime("%Y-%m-%d %H:%M:%S")
+    except Exception as e:
+        return f"날짜 및 시간 표현식 계산 중 오류 발생: {e}"
 
 
 @tool
