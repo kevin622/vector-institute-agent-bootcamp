@@ -43,7 +43,7 @@ source .venv/bin/activate
 다음 명령어를 실행하면 DB가 생성되고 가짜 데이터가 시드됩니다.
 
 ```shell
-python -m db.init_db
+uv run python -m db.init_db
 ```
 
 `db/data.db` 파일이 프로젝트 루트에 생성됩니다.
@@ -65,7 +65,7 @@ python -m db.init_db
 환경 준비 후 아래 명령을 실행하세요.
 
 ```shell
-python -m test.test_main_agent
+uv run python -m test.test_main_agent
 ```
 
 > 실행 결과 예시
@@ -113,7 +113,7 @@ Name: call_calculator_agent
 다음 명령어로 Streamlit 웹페이지를 실행하세요.
 
 ```shell
-streamlit run main.py
+uv run streamlit run main.py
 ```
 
 ![streamlit-page](./assets/streamlit-page.png)
