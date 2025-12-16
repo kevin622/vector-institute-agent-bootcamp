@@ -17,7 +17,7 @@ SYSTEM_PROMPT = """
 TOOLS = [
     google_search,
 ]
-TOOLS_DESCRIPTION = "\n".join([f"- {tool.name}: {tool.description}" for tool in TOOLS])
+TOOLS_DESCRIPTION = "\n\n".join([f"- {tool.name}\n: {tool.description}" for tool in TOOLS])
 ## agent
 AGENT_DESCRIPTION = f"""
 웹(인터넷)을 검색할 수 있는 에이전트를 호출하여 응답을 반환.

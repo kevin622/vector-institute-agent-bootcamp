@@ -23,7 +23,7 @@ TOOLS = [
     sort_values_based_on_key,
     get_length_of_object,
 ]
-TOOLS_DESCRIPTION = "\n".join([f"- {tool.name}: {tool.description}" for tool in TOOLS])
+TOOLS_DESCRIPTION = "\n\n".join([f"- {tool.name}\n: {tool.description}" for tool in TOOLS])
 ## agent
 AGENT_DESCRIPTION = f"""
 날짜와 수학(덧셈, 뺄셈, 나눗셈, 곱셈 등의 사칙연산) 등을 계산하는 에이전트를 호출하여 응답을 반환.

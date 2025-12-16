@@ -33,7 +33,7 @@ TOOLS = [
     join_tables_on_column,
     get_unique_values_of_columns,
 ]
-TOOLS_DESCRIPTION = "\n".join([f"- {tool.name}: {tool.description}" for tool in TOOLS])
+TOOLS_DESCRIPTION = "\n\n".join([f"- {tool.name}\n: {tool.description}" for tool in TOOLS])
 ## agent
 AGENT_DESCRIPTION = f"""
 AI 기반 연구와 솔루션 개발 및 판매를 하는 회사의 데이터베이스에 접근할 수 있는 SQL 에이전트를 호출하여 응답을 반환.
