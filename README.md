@@ -4,7 +4,7 @@
 
 `.env.example` 파일을 복사하여 `.env` 파일을 생성하고 필요한 환경변수를 설정하세요.
 
-```bash
+```shell
 cp .env.example .env
 ```
 
@@ -27,13 +27,13 @@ cp .env.example .env
 
 이 프로젝트는 `uv`를 사용하여 가상환경을 관리합니다. 없다면 다음 명령어로 `uv`를 설치하세요.
 
-```bash
+```shell
 pip install uv
 ```
 
 가상환경을 생성하고 활성화하려면 다음 명령어를 실행하세요.
 
-```bash
+```shell
 uv sync
 source .venv/bin/activate
 ```
@@ -42,8 +42,8 @@ source .venv/bin/activate
 
 다음 명령어를 실행하면 DB가 생성되고 가짜 데이터가 시드됩니다.
 
-```bash
-python -m db.init_db
+```shell
+uv run python -m db.init_db
 ```
 
 `db/data.db` 파일이 프로젝트 루트에 생성됩니다.
@@ -64,8 +64,8 @@ python -m db.init_db
 
 환경 준비 후 아래 명령을 실행하세요.
 
-```bash
-python -m test.test_main_agent
+```shell
+uv run python -m test.test_main_agent
 ```
 
 > 실행 결과 예시
@@ -112,8 +112,8 @@ Name: call_calculator_agent
 
 다음 명령어로 Streamlit 웹페이지를 실행하세요.
 
-```bash
-streamlit run main.py
+```shell
+uv run streamlit run main.py
 ```
 
 ![streamlit-page](./assets/streamlit-page.png)
@@ -128,7 +128,7 @@ LangFuse API Key를 설정했다면 에이전트의 대화 내용이 LangFuse에
 
 LangSmith API Key를 설정했다면 에이전트의 대화 흐름과 툴 호출을 시각적으로 확인할 수 있습니다.
 
-```bash
+```shell
 langgraph dev --tunnel
 ```
 
