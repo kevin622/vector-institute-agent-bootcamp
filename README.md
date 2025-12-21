@@ -43,22 +43,18 @@ source .venv/bin/activate
 다음 명령어를 실행하면 DB가 생성되고 가짜 데이터가 시드됩니다.
 
 ```shell
-uv run python -m db.init_db
+uv run python -m db.load_movie_json
 ```
 
-`db/data.db` 파일이 프로젝트 루트에 생성됩니다.
+`db/movie.db` 파일이 프로젝트 루트에 생성됩니다.
 
 스키마는 아홉 개의 테이블이 포함되어 있습니다.
 
-- `departments`: 부서명, 위치, 생성일
-- `employees`: 이름, 이메일(유니크), 직함, 부서 FK, 생성일
-- `products`: 제품명(유니크), 카테고리, 가격, 과금주기, 생성일
-- `clients`: 고객사명(유니크), 산업군, 도시, 생성일
-- `contracts`: 고객 FK, 제품 FK, 영업 담당자 FK, 금액, 계약기간, 상태, 생성일
-- `invoices`: 계약 FK, 청구/지불 금액, 결제수단, 생성일
-- `projects`: 이름, 고객 FK, 제품 FK, 프로젝트 오너 FK, 단계(PoC/Pilot/Production), 생성일
-- `meetings`: 고객 FK, 주최자 FK, 주제, 생성일
-- `project_assignments`: 프로젝트 FK, 직원 FK, 역할, 생성일
+- `Movies`: 영화 정보가 담긴 데이터
+- `People`: 감독, 배우, 스태프 등의 정보가 담긴 데이터
+- `Experts`: 평론가들 정보가 담긴 데이터
+- `MoviePeople`: 영화와 감독, 배우, 스태프 등이 연결되어 있는 테이블
+- `MovieExperts`: 영화와 평론이 연결되어있는 테이블
 
 ## 에이전트 실행
 
