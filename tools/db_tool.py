@@ -5,13 +5,16 @@ from sqlalchemy import create_engine, inspect, Table, MetaData, select
 from sqlalchemy.orm import sessionmaker, Session
 from langchain.tools import tool
 
-
 _ENGINE = None  # lazy 생성
 SessionLocal = None  # lazy 세션팩토리
 
+# 반환 결과에 적용할 기본 최대 행 수 (대량 데이터로 인한 OOM 및 프롬프트가 너무 길어지는 문제 방지)
+DEFAULT_ROW_LIMIT = 50
+
 # 프로젝트 루트 기준 DB 파일 경로 (현재 파일: tools/db_tool.py)
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DB_PATH = PROJECT_ROOT / "db" / "data.db"
+DB_PATH = PROJECT_ROOT / "db" / "movie.db"
+# DB_PATH = PROJECT_ROOT / "db" / "data.db"
 
 
 def _get_engine():
@@ -73,6 +76,31 @@ def _rows_to_join_dicts(
     return formatted_rows
 
 
+def _resolve_limit(limit: Optional[int]) -> int:
+    """요청된 limit을 정리한다. 0 이하는 무시하고 기본값 사용."""
+    if limit is None or limit <= 0:
+        return DEFAULT_ROW_LIMIT
+    return limit
+
+
+def _order_columns(table, order_by: Optional[List[str]] = None) -> list:
+    """정렬 기준 컬럼을 반환한다. 우선순위: 사용자 지정 → PK → 첫 번째 컬럼."""
+    if order_by:
+        cols = []
+        for name in order_by:
+            if name in table.c:
+                cols.append(table.c[name])
+        if cols:
+            return cols
+
+    pk_cols = list(table.primary_key.columns)
+    if pk_cols:
+        return pk_cols
+
+    # PK가 없으면 첫 컬럼만 사용해 안정적인 정렬을 시도
+    return [next(iter(table.c))]
+
+
 @tool
 def get_tables_from_db() -> list[str]:
     """현재 DB에 존재하는 테이블 이름들을 반환."""
@@ -105,12 +133,20 @@ def get_column_info_from_table(table_name: str) -> list[dict]:
 
 
 @tool
-def get_all_data_from_table(table_name: str) -> dict[str, Any]:
+def get_top_n_data_from_table(
+    table_name: str,
+    column_names: Optional[List[str]] = None,
+    limit: Optional[int] = DEFAULT_ROW_LIMIT,
+    order_by: Optional[List[str]] = None,
+) -> dict[str, Any]:
     """
-    특정 테이블의 모든 데이터를 반환.
+    특정 테이블의 상위 N개 데이터를 반환.
 
     Args:
         table_name (str): 데이터를 가져올 테이블 이름.
+        column_names (Optional[List[str]]): 반환할 컬럼 이름 리스트. 지정하지 않으면 모든 컬럼 반환.
+        limit (Optional[int]): 반환할 최대 행 수.
+        order_by (Optional[List[str]]): 정렬 기준 컬럼 이름 리스트. 지정하지 않으면 PK 또는 첫 번째 컬럼 기준 정렬.
     Returns:
         dict: 테이블, 컬럼, 행 정보를 담은 딕셔너리.
     """
@@ -120,16 +156,21 @@ def get_all_data_from_table(table_name: str) -> dict[str, Any]:
             metadata = MetaData()
             table = Table(table_name, metadata, autoload_with=engine)
 
-            stmt = select(table)
+            resolved_limit = _resolve_limit(limit)
+            order_cols = _order_columns(table, order_by)
+            stmt = select(table).order_by(*order_cols).limit(resolved_limit)
             result = conn.execute(stmt)
             rows = result.fetchall()
-            column_names = [col.name for col in table.c]
+            if column_names is None:
+                column_names = [col.name for col in table.c]
 
             formatted_rows = _rows_to_table_dicts(rows, column_names)
 
             return {
                 "table": table_name,
                 "columns": column_names,
+                "limit": resolved_limit,
+                "order_by": [col.name for col in order_cols],
                 "row_count": len(formatted_rows),
                 "rows": formatted_rows,
             }
@@ -143,6 +184,8 @@ def filter_data_by_gte_or_lte(
     column_name: str,
     gte: Optional[float] = None,
     lte: Optional[float] = None,
+    limit: Optional[int] = DEFAULT_ROW_LIMIT,
+    order_by: Optional[List[str]] = None,
 ) -> dict[str, Any]:
     """
     특정 테이블의 특정 컬럼에 대해 숫자 조건 필터링을 수행하여 결과 반환.
@@ -152,6 +195,8 @@ def filter_data_by_gte_or_lte(
         column_name (str): 필터링할 컬럼 이름.
         gte (Optional[float]): 해당 컬럼의 최소값 조건.
         lte (Optional[float]): 해당 컬럼의 최대값 조건.
+        limit (Optional[int]): 반환할 최대 행 수.
+        order_by (Optional[List[str]]): 정렬 기준 컬럼 이름 리스트. 지정하지 않으면 PK 또는 첫 번째 컬럼 기준 정렬.
     Returns:
         dict: 필터링 조건과 결과를 담은 딕셔너리.
     Raises:
@@ -168,11 +213,14 @@ def filter_data_by_gte_or_lte(
             metadata = MetaData()
             table = Table(table_name, metadata, autoload_with=engine)
 
-            stmt = select(table)
+            resolved_limit = _resolve_limit(limit)
+            order_cols = _order_columns(table, order_by)
+            stmt = select(table).order_by(*order_cols)
             if gte is not None:
                 stmt = stmt.where(table.c[column_name] >= gte)
             if lte is not None:
                 stmt = stmt.where(table.c[column_name] <= lte)
+            stmt = stmt.limit(resolved_limit)
 
             result = conn.execute(stmt)
             rows = result.fetchall()
@@ -191,6 +239,8 @@ def filter_data_by_gte_or_lte(
                 "table": table_name,
                 "columns": column_names,
                 "filters": filters,
+                "limit": resolved_limit,
+                "order_by": [col.name for col in order_cols],
                 "row_count": len(formatted_rows),
                 "rows": formatted_rows,
             }
@@ -203,6 +253,8 @@ def filter_data_by_inclusion(
     table_name: str,
     column_name: str,
     include_values: list,
+    limit: Optional[int] = DEFAULT_ROW_LIMIT,
+    order_by: Optional[List[str]] = None,
 ) -> dict[str, Any]:
     """
     특정 테이블의 특정 컬럼에 대해 포함 조건 필터링을 수행하여 결과 반환.
@@ -211,6 +263,8 @@ def filter_data_by_inclusion(
         table_name (str): 필터링할 테이블 이름.
         column_name (str): 필터링할 컬럼 이름.
         include_values (list): 포함할 값들의 리스트.
+        limit (Optional[int]): 반환할 최대 행 수.
+        order_by (Optional[List[str]]): 정렬 기준 컬럼 이름 리스트. 지정하지 않으면 PK 또는 첫 번째 컬럼 기준 정렬.
     Returns:
         dict: 필터링 조건과 결과를 담은 딕셔너리.
     Raises:
@@ -227,7 +281,14 @@ def filter_data_by_inclusion(
             metadata = MetaData()
             table = Table(table_name, metadata, autoload_with=engine)
 
-            stmt = select(table).where(table.c[column_name].in_(include_values))
+            resolved_limit = _resolve_limit(limit)
+            order_cols = _order_columns(table, order_by)
+            stmt = (
+                select(table)
+                .where(table.c[column_name].in_(include_values))
+                .order_by(*order_cols)
+                .limit(resolved_limit)
+            )
 
             result = conn.execute(stmt)
             rows = result.fetchall()
@@ -241,6 +302,8 @@ def filter_data_by_inclusion(
                     "column": column_name,
                     "include_values": include_values,
                 },
+                "limit": resolved_limit,
+                "order_by": [col.name for col in order_cols],
                 "row_count": len(formatted_rows),
                 "rows": formatted_rows,
             }
@@ -253,6 +316,8 @@ def filter_data_by_like(
     table_name: str,
     column_name: str,
     like_pattern: str,
+    limit: Optional[int] = DEFAULT_ROW_LIMIT,
+    order_by: Optional[List[str]] = None,
 ) -> dict[str, Any]:
     """
     특정 테이블의 특정 컬럼에 대해 LIKE(부분 문자열) 조건 필터링을 수행하여 결과 반환.
@@ -261,6 +326,8 @@ def filter_data_by_like(
         table_name (str): 필터링할 테이블 이름.
         column_name (str): 필터링할 컬럼 이름.
         like_pattern (str): SQL LIKE 패턴(예: '%Research%').
+        limit (Optional[int]): 반환할 최대 행 수.
+        order_by (Optional[List[str]]): 정렬 기준 컬럼 이름 리스트. 지정하지 않으면 PK 또는 첫 번째 컬럼 기준 정렬.
     Returns:
         dict: 필터링 조건과 결과를 담은 딕셔너리.
     Raises:
@@ -277,7 +344,11 @@ def filter_data_by_like(
             metadata = MetaData()
             table = Table(table_name, metadata, autoload_with=engine)
 
-            stmt = select(table).where(table.c[column_name].like(like_pattern))
+            resolved_limit = _resolve_limit(limit)
+            order_cols = _order_columns(table, order_by)
+            stmt = (
+                select(table).where(table.c[column_name].like(like_pattern)).order_by(*order_cols).limit(resolved_limit)
+            )
 
             result = conn.execute(stmt)
             rows = result.fetchall()
@@ -291,6 +362,8 @@ def filter_data_by_like(
                     "column": column_name,
                     "like": like_pattern,
                 },
+                "limit": resolved_limit,
+                "order_by": [col.name for col in order_cols],
                 "row_count": len(formatted_rows),
                 "rows": formatted_rows,
             }
@@ -304,6 +377,8 @@ def join_tables_on_column(
     right_table: str,
     join_column_left: str,
     join_column_right: str,
+    limit: Optional[int] = DEFAULT_ROW_LIMIT,
+    order_by: Optional[List[str]] = None,
 ) -> dict[str, Any]:
     """
     두 테이블을 특정 컬럼을 기준으로 조인하여 결과 반환.
@@ -311,7 +386,10 @@ def join_tables_on_column(
     Args:
         left_table (str): 왼쪽 테이블 이름.
         right_table (str): 오른쪽 테이블 이름.
-        join_column (str): 조인할 컬럼 이름.
+        join_column_left (str): 왼쪽 테이블에서 조인할 컬럼 이름.
+        join_column_right (str): 오른쪽 테이블에서 조인할 컬럼 이름.
+        limit (Optional[int]): 반환할 최대 행 수.
+        order_by (Optional[List[str]]): 정렬 기준 컬럼 이름 리스트. 지정하지 않으면 PK 또는 첫 번째 컬럼 기준 정렬.
     Returns:
         dict: 조인 정보와 결과를 담은 딕셔너리.
     Raises:
@@ -337,9 +415,16 @@ def join_tables_on_column(
             left_tbl = Table(left_table, metadata, autoload_with=engine)
             right_tbl = Table(right_table, metadata, autoload_with=engine)
 
-            stmt = select(left_tbl, right_tbl).join(
-                right_tbl,
-                left_tbl.c[join_column_left] == right_tbl.c[join_column_right],
+            resolved_limit = _resolve_limit(limit)
+            order_cols = _order_columns(left_tbl, order_by)
+            stmt = (
+                select(left_tbl, right_tbl)
+                .join(
+                    right_tbl,
+                    left_tbl.c[join_column_left] == right_tbl.c[join_column_right],
+                )
+                .order_by(*order_cols)
+                .limit(resolved_limit)
             )
 
             result = conn.execute(stmt)
@@ -366,6 +451,8 @@ def join_tables_on_column(
                     "left_column": join_column_left,
                     "right_column": join_column_right,
                 },
+                "limit": resolved_limit,
+                "order_by": [col.name for col in order_cols],
                 "row_count": len(formatted_rows),
                 "rows": formatted_rows,
             }
@@ -374,13 +461,18 @@ def join_tables_on_column(
 
 
 @tool
-def get_unique_values_of_columns(table_name: str, column_names: List[str]) -> dict[str, Any]:
+def get_unique_values_of_columns(
+    table_name: str,
+    column_names: List[str],
+    limit: Optional[int] = DEFAULT_ROW_LIMIT,
+) -> dict[str, Any]:
     """
     특정 테이블의 여러 컬럼에 대해 고유 값들을 반환.
 
     Args:
         table_name (str): 데이터를 가져올 테이블 이름.
         column_names (List[str]): 고유 값을 가져올 컬럼 이름 리스트.
+        limit (Optional[int]): 각 컬럼별로 반환할 최대 고유 값 수.
     Returns:
         dict: 컬럼별 고유 값 리스트를 담은 딕셔너리.
     """
@@ -390,11 +482,12 @@ def get_unique_values_of_columns(table_name: str, column_names: List[str]) -> di
             metadata = MetaData()
             table = Table(table_name, metadata, autoload_with=engine)
 
+            resolved_limit = _resolve_limit(limit)
             unique_values: Dict[str, List[Any]] = {}
             for col_name in column_names:
                 if col_name not in table.c:
                     return _error_response(f"Column '{col_name}' does not exist in table '{table_name}'.")
-                stmt = select(table.c[col_name]).distinct()
+                stmt = select(table.c[col_name]).distinct().order_by(table.c[col_name]).limit(resolved_limit)
                 result = conn.execute(stmt)
                 rows = result.fetchall()
                 unique_values[col_name] = [row[0] for row in rows]
@@ -402,6 +495,7 @@ def get_unique_values_of_columns(table_name: str, column_names: List[str]) -> di
             return {
                 "table": table_name,
                 "unique_values": unique_values,
+                "limit": resolved_limit,
             }
     except Exception as e:
         return _error_response(f"Error occurred while getting unique values from table '{table_name}': {str(e)}")
