@@ -14,7 +14,6 @@ DEFAULT_ROW_LIMIT = 50
 # 프로젝트 루트 기준 DB 파일 경로 (현재 파일: tools/db_tool.py)
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = PROJECT_ROOT / "db" / "movie.db"
-# DB_PATH = PROJECT_ROOT / "db" / "data.db"
 
 
 def _get_engine():
@@ -26,13 +25,6 @@ def _get_engine():
         _ENGINE = create_engine(f"sqlite:///{DB_PATH}", echo=False, future=True)
         SessionLocal = sessionmaker(bind=_ENGINE, expire_on_commit=False, future=True)
     return _ENGINE
-
-
-def get_session() -> Session:
-    """새로운 DB 세션을 반환."""
-    if SessionLocal is None:
-        _get_engine()
-    return SessionLocal()
 
 
 def _error_response(message: str) -> dict[str, str]:
