@@ -47,14 +47,3 @@ agent = create_agent(
     tools=TOOLS,
     system_prompt=SYSTEM_PROMPT,
 )
-
-
-if __name__ == "__main__":
-    user_input = "괴물의 감독이 누구야"
-    # user_input = input("사용자 질문을 입력하세요: ")
-    for chunk in agent.stream(
-        {"messages": [{"role": "user", "content": user_input}]},
-        stream_mode="messages",
-        # stream_mode="debug",
-    ):
-        print(chunk)
