@@ -101,9 +101,11 @@ def _order_columns(table, order_by: Optional[List[str]] = None) -> list:
     return [next(iter(table.c))]
 
 
-@tool
 def get_tables_from_db() -> list[str]:
-    """현재 DB에 존재하는 테이블 이름들을 반환."""
+    """
+    현재 DB에 존재하는 테이블 이름들을 반환.
+    (추가) tool로 사용하기보단 에이전트 초기화 시점에 메타정보 확인용으로 사용.
+    """
     try:
         engine = _get_engine()
         with engine.connect() as conn:
