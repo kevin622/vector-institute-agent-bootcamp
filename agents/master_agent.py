@@ -3,7 +3,8 @@ from langchain_openai import ChatOpenAI
 
 from agents.db_agent import call_sql_agent
 from agents.web_agent import call_web_agent
-from agents.calculator_agent import call_calculator_agent
+
+# from agents.calculator_agent import call_calculator_agent
 
 from tools.util_tool import plan_recorder
 
@@ -29,7 +30,7 @@ TOOLS = [
     plan_recorder,
     call_sql_agent,
     call_web_agent,
-    call_calculator_agent,
+    # call_calculator_agent,
 ]
 
 agent = create_agent(

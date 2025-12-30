@@ -289,3 +289,5 @@ evaluation_result_*.jsonl
 synthesized_queries_*.json
 
 db/json/*.json
+
+test/json/*.json
