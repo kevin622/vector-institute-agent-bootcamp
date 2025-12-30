@@ -290,4 +290,6 @@ synthesized_queries_*.json
 
 db/json/*.json
 
-test/json/*.json
+test/static/json/*.json
+!test/static/json/movie_test.json
+!test/static/json/common_sense_test.json
