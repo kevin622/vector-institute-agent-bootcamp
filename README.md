@@ -43,7 +43,7 @@ source .venv/bin/activate
 다음 명령어를 실행하면 DB가 생성되고 가짜 데이터가 시드됩니다.
 
 ```shell
-uv run python -m db.load_movie_json
+uv run python -m db
 ```
 
 `db/movie.db` 파일이 프로젝트 루트에 생성됩니다.
