@@ -287,3 +287,9 @@ $RECYCLE.BIN/
 agent_result_*.jsonl
 evaluation_result_*.jsonl
 synthesized_queries_*.json
+
+db/json/*.json
+
+test/static/json/*.json
+!test/static/json/movie_test.json
+!test/static/json/common_sense_test.json

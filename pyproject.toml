@@ -6,10 +6,12 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
 	"google-search-results>=2.4.2",
+	"ijson>=3.4.0.post0",
 	"langchain>=1.1.0",
 	"langchain-openai>=1.1.0",
 	"langfuse>=3.10.1",
 	"langgraph-cli[inmem]>=0.4.7",
+	"pip>=25.3",
 	"python-dotenv>=1.2.1",
 	"SQLAlchemy>=2.0.0",
 	"streamlit>=1.51.0",
