@@ -1,7 +1,7 @@
 from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
 
-from agents.db_agent import call_sql_agent
+from agents.db_agent import call_db_agent
 from agents.web_agent import call_web_agent
 
 # from agents.calculator_agent import call_calculator_agent
@@ -28,7 +28,7 @@ SYSTEM_PROMPT = """
 
 TOOLS = [
     plan_recorder,
-    call_sql_agent,
+    call_db_agent,
     call_web_agent,
     # call_calculator_agent,
 ]

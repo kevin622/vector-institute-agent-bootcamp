@@ -73,7 +73,7 @@ agent = create_agent(
 
 
 @tool(description=AGENT_DESCRIPTION)
-def call_sql_agent(input_text: str) -> dict:
+def call_db_agent(input_text: str) -> dict:
     """
     Args:
         input_text (str): 사용자 입력 텍스트.
